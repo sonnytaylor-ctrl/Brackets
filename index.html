@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Heavyist — 2011 Bracket</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.fog.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{background:#000;height:100%;overflow:hidden;}
+
+  #stage-wrap{
+    position:fixed;inset:0;background:#000;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+
+  #stage{
+    width:1080px;height:1920px;position:relative;
+    background:#050506;overflow:hidden;transform-origin:center center;
+  }
+
+  button{background:none;border:none;outline:none;cursor:pointer;padding:0;font:inherit;}
+
+  /* ── Matchup ── */
+  .matchup{display:flex;align-items:stretch;width:100%;min-height:116px;}
+
+  .slot-btn{
+    display:flex;flex-direction:row;align-items:center;flex:1;padding:0;
+    background:transparent;border:none;outline:none;transition:all .15s ease;
+  }
+  .slot-btn.side-a{justify-content:flex-end;}
+  .slot-btn.side-b{justify-content:flex-start;}
+  .slot-btn.winner{background:rgba(34,197,94,.07);}
+  .slot-btn.loser{opacity:0.25;}
+  .slot-btn.tbd{opacity:0.35;cursor:default;}
+
+  .slot-text-a{
+    flex:none;width:130px;display:flex;flex-direction:column;
+    justify-content:flex-start;align-items:flex-end;
+    gap:3px;padding:10px 10px 10px 12px;text-align:right;
+  }
+  .slot-text-b{
+    flex:none;width:130px;display:flex;flex-direction:column;
+    justify-content:flex-start;
+    gap:3px;padding:10px 12px 10px 10px;text-align:left;
+  }
+
+  .slot-seed{
+    font-family:'Anton',sans-serif;font-size:11px;
+    color:var(--accent,#cf1b22);line-height:1;min-height:13px;display:block;
+  }
+  .slot-title{
+    font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;
+    letter-spacing:.3px;color:var(--bone,#ece4d2);
+    text-transform:uppercase;line-height:1.15;word-break:break-word;
+  }
+  .slot-artist{
+    font-family:'Oswald',sans-serif;font-weight:400;font-size:10px;
+    letter-spacing:.8px;color:var(--mut,#7a746a);text-transform:uppercase;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+
+  .slot-cover{
+    width:116px;height:116px;flex:none;background-color:#121215;
+    background-size:cover;background-position:center;
+    outline:1px solid rgba(255,255,255,.1);
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .slot-mono{
+    font-family:'Anton',sans-serif;font-size:28px;
+    color:rgba(236,228,210,.16);line-height:1;user-select:none;
+  }
+
+  .vs-divider{
+    display:flex;align-items:center;justify-content:center;
+    width:36px;flex:none;background:transparent;
+  }
+  .vs-text{
+    font-family:'Anton',sans-serif;font-size:14px;letter-spacing:1px;
+    padding-left:1px;color:rgba(207,27,34,.6);line-height:1;
+  }
+
+  /* ── Section headers ── */
+  .section-label{
+    display:flex;align-items:center;gap:12px;
+    justify-content:center;margin-bottom:26px;
+  }
+  .label-line{flex:1;max-width:70px;height:1px;background:var(--accent,#cf1b22);opacity:.35;}
+  .label-line.strong{opacity:.5;}
+  .label-text{
+    font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;
+    letter-spacing:6px;color:var(--bone,#ece4d2);text-transform:uppercase;
+  }
+
+  /* ── Reset button ── */
+  #reset-btn{
+    font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:4px;
+    font-size:12px;color:var(--mut,#7a746a);text-transform:uppercase;
+    background:transparent;border:1px solid rgba(255,255,255,.12);
+    padding:10px 26px;cursor:pointer;transition:all .15s ease;
+  }
+  #reset-btn:hover{border-color:var(--accent,#cf1b22);color:var(--accent,#cf1b22);}
+</style>
+</head>
+<body>
+
+<div id="stage-wrap">
+  <div id="stage">
+    <!-- Vanta fog -->
+    <div id="fog" style="position:absolute;inset:0;z-index:0;"></div>
+    <!-- Grain A (overlay) -->
+    <div id="grain-a" style="position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:overlay;opacity:0.55;background-size:220px;"></div>
+    <!-- Radial vignette -->
+    <div style="position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(125% 80% at 50% 34%,rgba(0,0,0,0) 40%,rgba(0,0,0,.66) 100%);"></div>
+
+    <!-- Content -->
+    <div style="position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;padding:34px 40px 28px;overflow:hidden;">
+
+      <!-- Logo -->
+      <img src="uploads/HVYST.png" alt="The Heavyist"
+           style="width:540px;max-width:90%;height:auto;display:block;margin:0 auto;filter:drop-shadow(0 6px 24px rgba(0,0,0,.75));"/>
+
+      <!-- Title block -->
+      <div style="text-align:center;margin-top:2px;">
+        <div style="font-family:'Anton',sans-serif;font-size:155px;line-height:.82;color:var(--accent,#cf1b22);text-transform:uppercase;-webkit-text-stroke:1px rgba(0,0,0,.3);text-shadow:0 3px 0 rgba(0,0,0,.5),0 0 44px rgba(207,27,34,.28);">2011</div>
+        <div style="font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;letter-spacing:7px;color:var(--bone,#ece4d2);text-transform:uppercase;margin-top:6px;text-indent:7px;">Album of the Year Bracket</div>
+        <div style="font-family:'Oswald',sans-serif;font-weight:400;font-size:12px;letter-spacing:3px;color:var(--mut,#6c675f);text-transform:uppercase;margin-top:5px;">Tap an album to advance it</div>
+      </div>
+
+      <!-- Play-In -->
+      <div style="margin-top:28px;">
+        <div class="section-label">
+          <span class="label-line strong"></span>
+          <span class="label-text">Play-In</span>
+          <span class="label-line"></span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="playin-grid"></div>
+      </div>
+
+      <!-- Quarter Finals -->
+      <div style="margin-top:26px;">
+        <div class="section-label">
+          <span class="label-line"></span>
+          <span class="label-text">Quarter Finals</span>
+          <span class="label-line"></span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="qf-grid"></div>
+      </div>
+
+      <!-- Semi Finals -->
+      <div style="margin-top:26px;">
+        <div class="section-label">
+          <span class="label-line"></span>
+          <span class="label-text">Semi Finals</span>
+          <span class="label-line"></span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="sf-grid"></div>
+      </div>
+
+      <!-- Grand Final -->
+      <div style="margin-top:26px;">
+        <div class="section-label">
+          <span class="label-line" style="max-width:100px;"></span>
+          <span class="label-text">Grand Final</span>
+          <span class="label-line" style="max-width:100px;"></span>
+        </div>
+        <div style="max-width:600px;margin:0 auto;width:100%;" id="final-slot"></div>
+      </div>
+
+      <!-- Champion -->
+      <div style="margin-top:16px;text-align:center;">
+        <div style="font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;letter-spacing:9px;color:var(--accent,#cf1b22);text-transform:uppercase;text-indent:9px;">Champion</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0 0;max-width:560px;margin:10px auto 0;">
+          <div id="champ-cover" style="width:220px;height:220px;flex:none;background-color:#121215;background-size:cover;background-position:center;border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+            <span id="champ-mono" style="font-family:'Anton',sans-serif;font-size:72px;color:rgba(236,228,210,.15);">—</span>
+          </div>
+          <div style="text-align:center;">
+            <div id="champ-title" style="font-family:'Anton',sans-serif;font-size:36px;color:var(--bone,#ece4d2);text-transform:uppercase;line-height:.96;">TBD</div>
+            <div id="champ-artist" style="font-family:'Oswald',sans-serif;font-weight:400;font-size:14px;letter-spacing:2px;color:var(--mut,#6c675f);text-transform:uppercase;margin-top:7px;">Crown your album of the year</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:20px;padding-bottom:4px;">
+        <button id="reset-btn">Reset Bracket</button>
+        <a href="https://discord.gg/GZwTPCUVXN" target="_blank"
+           style="font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:3px;font-size:11px;color:var(--accent,#cf1b22);text-transform:uppercase;text-decoration:none;">Join The Discord ↗</a>
+      </div>
+
+    </div>
+
+    <!-- Grain B (top layer) -->
+    <div id="grain-b" style="position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:overlay;opacity:.1;background-size:170px;"></div>
+  </div>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
+const ALBUMS = {
+  masst:    { title: 'Måsstaden',             artist: 'Vildhjarta',              seed: 1,  cover: 'uploads/vildhjarta.jpg' },
+  darker:   { title: 'Darker Handcraft',      artist: 'Trap Them',               seed: 2,  cover: 'uploads/trap them.jpg' },
+  bigkiss:  { title: 'Big Kiss Goodnight',    artist: 'Trapped Under Ice',       seed: 3,  cover: 'uploads/trapped under ise.jpg' },
+  ritual:   { title: 'Ritual',                artist: 'The Black Dahlia Murder', seed: 4,  cover: 'uploads/the black dahlia.jpg' },
+  speaker:  { title: 'Speaker of the Dead',   artist: 'Emmure',                  seed: 5,  cover: 'uploads/Emmure-fa34bcdc.jpg' },
+  smoke:    { title: 'When the Smoke Clears', artist: 'Foundation',              seed: 6,  cover: 'uploads/Foundation.jpg' },
+  harmsway: { title: 'Isolation',             artist: "Harm's Way",              seed: 7,  cover: "uploads/Harm's Way.jpg" },
+  hunter:   { title: 'The Hunter',            artist: 'Mastodon',                seed: 8,  cover: 'uploads/Mastodon.jpg' },
+  scurr:    { title: 'Scurrilous',            artist: 'Protest the Hero',        seed: 9,  cover: 'uploads/Protest The Hero.jpg' },
+  dirge:    { title: 'Dirge',                 artist: 'Wormrot',                 seed: 10, cover: 'uploads/Wormrot.jpg' },
+  garden:   { title: 'Garden Window',         artist: "O'Brother",               seed: 11, cover: "uploads/O'Brother.jpg" },
+  parting:  { title: 'Parting the Sea…',      artist: 'Touché Amoré',            seed: 12, cover: 'uploads/Touche Amore.jpg' },
+};
+
+const MATCH = {
+  playinA: { a: { album: 'scurr' },   b: { album: 'parting' } },
+  playinB: { a: { album: 'dirge' },   b: { album: 'garden' } },
+  qf1:     { a: { album: 'masst' },   b: { win: 'playinA' } },
+  qf2:     { a: { album: 'ritual' },  b: { album: 'speaker' } },
+  qf3:     { a: { album: 'darker' },  b: { win: 'playinB' } },
+  qf4:     { a: { album: 'bigkiss' }, b: { album: 'smoke' } },
+  sf1:     { a: { win: 'qf1' },       b: { win: 'qf2' } },
+  sf2:     { a: { win: 'qf3' },       b: { win: 'qf4' } },
+  final:   { a: { win: 'sf1' },       b: { win: 'sf2' } },
+};
+
+const DOWN = {
+  playinA: ['qf1', 'sf1', 'final'],
+  playinB: ['qf3', 'sf2', 'final'],
+  qf1: ['sf1', 'final'], qf2: ['sf1', 'final'],
+  qf3: ['sf2', 'final'], qf4: ['sf2', 'final'],
+  sf1: ['final'], sf2: ['final'], final: [],
+};
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let picks = {};
+try { const s = localStorage.getItem('bracket2011v3'); if (s) picks = JSON.parse(s); } catch(e) {}
+
+function savePicks() {
+  try { localStorage.setItem('bracket2011v3', JSON.stringify(picks)); } catch(e) {}
+}
+
+// ── Logic ─────────────────────────────────────────────────────────────────────
+function albumOf(slot) {
+  if (!slot) return null;
+  if (slot.album) return ALBUMS[slot.album];
+  if (slot.win) {
+    const side = picks[slot.win];
+    if (!side) return null;
+    return albumOf(MATCH[slot.win][side]);
+  }
+  return null;
+}
+
+function doPick(id, side) {
+  if (picks[id] === side) delete picks[id]; else picks[id] = side;
+  (DOWN[id] || []).forEach(d => delete picks[d]);
+  savePicks();
+  render();
+}
+
+function doReset() {
+  picks = {};
+  savePicks();
+  render();
+}
+
+// ── Matchup builder ───────────────────────────────────────────────────────────
+function makeMatchup(id) {
+  const wrap = document.createElement('div');
+  wrap.className = 'matchup';
+
+  ['a', 'b'].forEach((side, i) => {
+    if (i === 1) {
+      const vs = document.createElement('div');
+      vs.className = 'vs-divider';
+      vs.innerHTML = '<span class="vs-text">VS</span>';
+      wrap.appendChild(vs);
+    }
+
+    const slot    = MATCH[id][side];
+    const al      = albumOf(slot);
+    const winner  = picks[id];
+    const isWinner = winner === side;
+    const isLoser  = !!winner && winner !== side;
+
+    const btn = document.createElement('button');
+    btn.className = 'slot-btn side-' + side;
+    if (isWinner) btn.classList.add('winner');
+    else if (isLoser) btn.classList.add('loser');
+    else if (!al) btn.classList.add('tbd');
+    if (al) btn.addEventListener('click', () => doPick(id, side));
+
+    const cover = document.createElement('div');
+    cover.className = 'slot-cover';
+    if (al && al.cover) {
+      cover.style.backgroundImage = 'url("' + al.cover + '")';
+    } else {
+      const mono = document.createElement('span');
+      mono.className = 'slot-mono';
+      mono.textContent = al ? al.title.trim()[0].toUpperCase() : '—';
+      cover.appendChild(mono);
+    }
+
+    const text = document.createElement('div');
+    text.className = side === 'a' ? 'slot-text-a' : 'slot-text-b';
+
+    const seedEl = document.createElement('span');
+    seedEl.className = 'slot-seed';
+    seedEl.textContent = al ? String(al.seed) : '';
+
+    const titleEl = document.createElement('span');
+    titleEl.className = 'slot-title';
+    titleEl.textContent = al ? al.title : 'TBD';
+
+    const artistEl = document.createElement('span');
+    artistEl.className = 'slot-artist';
+    artistEl.textContent = al ? al.artist : '';
+
+    text.appendChild(seedEl);
+    text.appendChild(titleEl);
+    text.appendChild(artistEl);
+
+    if (side === 'a') { btn.appendChild(text); btn.appendChild(cover); }
+    else              { btn.appendChild(cover); btn.appendChild(text); }
+
+    wrap.appendChild(btn);
+  });
+
+  return wrap;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render() {
+  const fill = (id, ids) => {
+    const el = document.getElementById(id);
+    el.innerHTML = '';
+    ids.forEach(mid => el.appendChild(makeMatchup(mid)));
+  };
+
+  fill('playin-grid', ['playinA', 'playinB']);
+  fill('qf-grid',     ['qf2', 'qf4', 'qf1', 'qf3']);  // matches design order
+  fill('sf-grid',     ['sf1', 'sf2']);
+
+  const finalSlot = document.getElementById('final-slot');
+  finalSlot.innerHTML = '';
+  finalSlot.appendChild(makeMatchup('final'));
+
+  // Champion
+  const champ = albumOf({ win: 'final' });
+  const champCover  = document.getElementById('champ-cover');
+  const champMono   = document.getElementById('champ-mono');
+  const champTitle  = document.getElementById('champ-title');
+  const champArtist = document.getElementById('champ-artist');
+
+  if (champ && champ.cover) {
+    champCover.style.backgroundImage = 'url("' + champ.cover + '")';
+    champMono.style.display = 'none';
+  } else {
+    champCover.style.backgroundImage = 'none';
+    champMono.style.display = '';
+    champMono.textContent = champ ? champ.title.trim()[0].toUpperCase() : '—';
+  }
+
+  champTitle.textContent  = champ ? champ.title  : 'TBD';
+  champArtist.textContent = champ ? champ.artist : 'Crown your album of the year';
+}
+
+// ── Scale to fit ──────────────────────────────────────────────────────────────
+function fit() {
+  const stage = document.getElementById('stage');
+  const sc = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+  stage.style.transform = 'scale(' + sc + ')';
+}
+
+// ── Grain texture ─────────────────────────────────────────────────────────────
+function setupGrain() {
+  const noise = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E\")";
+  document.getElementById('grain-a').style.backgroundImage = noise;
+  document.getElementById('grain-b').style.backgroundImage = noise;
+}
+
+// ── Theme ─────────────────────────────────────────────────────────────────────
+function applyTheme() {
+  const s = document.getElementById('stage');
+  s.style.setProperty('--accent', '#cf1b22');
+  s.style.setProperty('--bone',   '#ece4d2');
+  s.style.setProperty('--mut',    '#7a746a');
+}
+
+// ── Vanta fog ─────────────────────────────────────────────────────────────────
+function initVanta() {
+  const tryInit = () => {
+    if (window._vanta) return;
+    if (window.VANTA && window.VANTA.FOG && window.THREE) {
+      window._vanta = window.VANTA.FOG({
+        el: document.getElementById('fog'),
+        THREE: window.THREE,
+        mouseControls: false, touchControls: false, gyroControls: false,
+        highlightColor: 0x4a4a50, midtoneColor: 0x232328,
+        lowlightColor:  0x0a0a0c, baseColor:    0x000000,
+        blurFactor: 0.55, speed: 1.0, zoom: 0.8,
+      });
+    } else { setTimeout(tryInit, 120); }
+  };
+  tryInit();
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+document.getElementById('reset-btn').addEventListener('click', doReset);
+window.addEventListener('resize', fit);
+
+applyTheme();
+setupGrain();
+fit();
+render();
+initVanta();
+</script>
+</body>
+</html>
