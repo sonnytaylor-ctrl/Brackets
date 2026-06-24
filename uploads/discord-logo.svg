@@ -1,27 +1,18 @@
 <svg viewBox="0 0 245 240" xmlns="http://www.w3.org/2000/svg">
   <!-- Red Discord Logo -->
-  <defs>
-    <style>
-      .discord-main { fill: #cf1b22; }
-      .discord-white { fill: #ffffff; }
-    </style>
-  </defs>
+  <!-- Main rounded blob shape -->
+  <path fill="#cf1b22" d="M104.14 0C47.881 0 0 46.81 0 104.14v127.34c0 5.871 4.762 10.52 10.52 10.52h211.38c5.871 0 10.52-4.762 10.52-10.52V104.14C242 46.81 197.12 0 104.14 0z"/>
 
-  <!-- Main shape -->
-  <path class="discord-main" d="M104.14 0C47.881 0 0 46.81 0 104.14v127.34c0 5.871 4.762 10.52 10.52 10.52h211.38c5.871 0 10.52-4.762 10.52-10.52V104.14C242 46.81 197.12 0 104.14 0z"/>
-
-  <!-- Left ear notch -->
-  <rect class="discord-main" x="37.38" y="0" width="22.4" height="22.4"/>
-
-  <!-- Right ear notch -->
-  <rect class="discord-main" x="185.22" y="0" width="22.4" height="22.4"/>
+  <!-- Top notches/ears -->
+  <path fill="#cf1b22" d="M37.38 0h22.4v22.4h-22.4z"/>
+  <path fill="#cf1b22" d="M185.22 0h22.4v22.4h-22.4z"/>
 
   <!-- Left eye -->
-  <circle class="discord-white" cx="62.6" cy="68.74" r="15.96"/>
+  <circle fill="#ffffff" cx="62.6" cy="68.74" r="15.96"/>
 
   <!-- Right eye -->
-  <circle class="discord-white" cx="179.36" cy="68.74" r="15.96"/>
+  <circle fill="#ffffff" cx="179.36" cy="68.74" r="15.96"/>
 
-  <!-- Smile/mouth -->
-  <path class="discord-white" d="M180.96 136.54c-19.84 14.88-51.52 16.48-67.76 16.48-16.24 0-47.68-1.36-67.76-16.48-3.44-2.56-8.96-0.56-8.96 4.16v27.52c0 17.92 14.56 32.48 32.48 32.48h89.44c17.92 0 32.48-14.56 32.48-32.48v-27.52c0-4.72-5.52-6.72-8.96-4.16z" fill-rule="evenodd"/>
+  <!-- Smile -->
+  <path fill="#ffffff" d="M180.96 136.54c-19.84 14.88-51.52 16.48-67.76 16.48-16.24 0-47.68-1.36-67.76-16.48-3.44-2.56-8.96-0.56-8.96 4.16v27.52c0 17.92 14.56 32.48 32.48 32.48h89.44c17.92 0 32.48-14.56 32.48-32.48v-27.52c0-4.72-5.52-6.72-8.96-4.16z"/>
 </svg>
