@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.fog.min.js"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -118,7 +119,7 @@
     <div style="position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(125% 80% at 50% 34%,rgba(0,0,0,0) 40%,rgba(0,0,0,.66) 100%);"></div>
 
     <!-- Content -->
-    <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:16px 16px 12px;width:100%;">
+    <div id="capture-area" style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:16px 16px 12px;width:100%;">
 
       <!-- Logo -->
       <img src="uploads/HVYST.png" alt="The Heavyist"
@@ -187,6 +188,7 @@
 
       <!-- Footer -->
       <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:10px;padding-bottom:2px;">
+        <button id="share-btn" style="font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:2px;font-size:10px;color:var(--accent,#cf1b22);text-transform:uppercase;background:transparent;border:1px solid var(--accent,#cf1b22);padding:7px 16px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;">Share Bracket</button>
         <button id="reset-btn">Reset</button>
         <a href="https://discord.gg/GZwTPCUVXN" target="_blank"
            style="display:flex;align-items:center;gap:6px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:2px;font-size:9px;color:var(--accent,#cf1b22);text-transform:uppercase;text-decoration:none;">
@@ -411,8 +413,46 @@ function initVanta() {
   tryInit();
 }
 
+// ── Share ─────────────────────────────────────────────────────────────────────
+function shareImage() {
+  const btn = document.getElementById('share-btn');
+  btn.textContent = 'Generating…';
+  btn.disabled = true;
+
+  const content = document.getElementById('capture-area');
+  html2canvas(content, {
+    backgroundColor: '#050506',
+    scale: 2,
+    useCORS: true,
+    allowTaint: true,
+    logging: false,
+  }).then(canvas => {
+    canvas.toBlob(blob => {
+      // Try native share sheet first (mobile)
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'bracket-2011.png', { type: 'image/png' })] })) {
+        navigator.share({
+          title: 'The Heavyist — 2011 Bracket',
+          files: [new File([blob], 'bracket-2011.png', { type: 'image/png' })],
+        }).catch(() => {});
+      } else {
+        // Fallback: download
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'bracket-2011.png';
+        a.click();
+      }
+      btn.textContent = 'Share Bracket';
+      btn.disabled = false;
+    }, 'image/png');
+  }).catch(() => {
+    btn.textContent = 'Share Bracket';
+    btn.disabled = false;
+  });
+}
+
 // ── Boot ──────────────────────────────────────────────────────────────────────
 document.getElementById('reset-btn').addEventListener('click', doReset);
+document.getElementById('share-btn').addEventListener('click', shareImage);
 window.addEventListener('resize', fit);
 
 applyTheme();
